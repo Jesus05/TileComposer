@@ -1,11 +1,17 @@
 #include "tilecomposerlib.h"
 
+#include "tilecomposer.h"
+
 #include <cstdlib>
 
 void *CreateTileSet(const void *firstImage, const void *secondImage, const long imageSize)
 {
-  const int tileSetSize = GetTileSetWidth(imageSize) * GetTileSetWidth(imageSize) * 4; //W * H * 4(ARGB)
-  void *memoryForTileSet = malloc(tileSetSize);
+  TileComposer composer(imageSize, firstImage, secondImage);
+  composer.setTilesetMemory(malloc(composer.size()));
+
+  composer.build();
+
+  return composer.tilesetMemory();
 }
 
 void FreeTileSet(void *tileSet)
@@ -15,11 +21,11 @@ void FreeTileSet(void *tileSet)
 
 long GetTileSetWidth(const long imageSize)
 {
-  return imageSize * 6 + 7;
+  return TileComposer::width(imageSize);
 }
 
 long GetTileSetHeight(const long imageSize)
 {
-  return imageSize * 3 + 4;
+  return TileComposer::height(imageSize);
 }
 

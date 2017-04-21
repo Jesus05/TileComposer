@@ -1,12 +1,11 @@
 #ifndef TILEPAINTER_H
 #define TILEPAINTER_H
 
-#include <QPainter>
-#include <QPoint>
-
 #include "noise/module/module.h"
 #include "lineargradient.h"
 #include "linearvgradient.h"
+
+#include <vector>
 
 class TilePainter
 {

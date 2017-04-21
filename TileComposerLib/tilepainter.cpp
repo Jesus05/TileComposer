@@ -2,10 +2,6 @@
 
 #include "noise/module/perlin.h"
 
-#include <cmath>
-
-#include <QDebug>
-
 double TilePainter::nx(const double &x, const TilePainter::EDirection &direction) const
 {
   double ret = (double)x / (double)m_tileSize;

@@ -24,12 +24,29 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 DEFINES += TILE_COMPOSER_EXPORT
 
-SOURCES += tilecomposerlib.cpp
+SOURCES += tilecomposerlib.cpp \
+    tilecomposer.cpp \
+    tilepainter.cpp \
+    lineargradient.cpp \
+    linearvgradient.cpp
 
 HEADERS += tilecomposerlib.h\
-        tilecomposerlib_global.h
+        tilecomposerlib_global.h \
+    tilecomposer.h \
+    tilepainter.h \
+    lineargradient.h \
+    linearvgradient.h
 
 unix {
     target.path = /usr/lib
     INSTALLS += target
+}
+
+INCLUDEPATH += ../../include
+
+LIBS += -L../../lib/
+
+win32 {
+    CONFIG(release, debug|release):LIBS += -lnoise
+    CONFIG(debug, debug|release):LIBS += -lnoised
 }
