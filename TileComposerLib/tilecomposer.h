@@ -1,6 +1,7 @@
 #ifndef TILECOMPOSER_H
 #define TILECOMPOSER_H
 
+#include <vector>
 
 class TileComposer
 {
@@ -17,11 +18,15 @@ class TileComposer
     static long size(const long &tileSize);
   private:
     void clear();
-    void copyImageOne(const int x, const int y);
-    void copyImageTwo(const int x, const int y);
+    void copyImage(const int x, const int y, const unsigned char* image);
+    void setAlpha(const int x, const int y, const std::vector<std::vector<unsigned char>> &alpha);
     void copyAllImages();
+    void setAllAlpha();
     long ixt(const int x, const int y) const;
     long ixi(const int x, const int y) const;
+    long imageOneX(const long &x) const;
+    long imageTwoX(const long &x) const;
+    long imageY(const long &y) const;
   public:
     TileComposer(const long &tileSize, const void* one, const void* two);
     void setTilesetMemory(void* tileset);

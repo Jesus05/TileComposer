@@ -1,6 +1,9 @@
 #include "tilecomposer.h"
 
+#include "tilepainter.h"
+
 #include <iostream>
+#include <cstring>
 
 long TileComposer::width(const long &tileSize)
 {
@@ -19,24 +22,24 @@ long TileComposer::size(const long &tileSize)
 
 void TileComposer::clear()
 {
-  for (int i = 0; i < m_tilesetSize; i++) m_tileset[i] = 0;
+  memset(m_tileset, 0, m_tilesetSize);
 }
 
-void TileComposer::copyImageOne(const int x, const int y)
+void TileComposer::copyImage(const int x, const int y, const unsigned char *image)
 {
-  for (int nx = 0; nx < m_tileSize; nx++)
   for (int ny = 0; ny < m_tileSize; ny++)
   {
-    m_tileset[ixt(x + nx, y + ny)] = m_one[ixi(nx, ny)];
+    memcpy(&m_tileset[ixt(x, y + ny)], &image[ixi(0, ny)], m_tileSize * 4);
   }
 }
 
-void TileComposer::copyImageTwo(const int x, const int y)
+void TileComposer::setAlpha(const int x, const int y, const std::vector<std::vector<unsigned char> > &alpha)
 {
-  for (int nx = 0; nx < m_tileSize; nx++)
   for (int ny = 0; ny < m_tileSize; ny++)
+  for (int nx = 0; nx < m_tileSize; nx++)
   {
-    m_tileset[ixt(x + nx, y + ny)] = m_two[ixi(nx, ny)];
+    const int index = ixt(x + nx, y + ny);
+    m_tileset[index + 3] = alpha[nx][ny];
   }
 }
 
@@ -45,17 +48,54 @@ void TileComposer::copyAllImages()
   for (int x = 0; x < 3; x++)
   for (int y = 0; y < 3; y++)
   {
-    const int x1 = 1 + x + m_tileSize * x;
-    const int ny = 1 + y + m_tileSize * y;
-    const int x2 = 4 + m_tileSize * (x + 3);
-    copyImageOne(x1, ny);
-    copyImageTwo(x2, ny);
+    copyImage(imageOneX(x), imageY(y), m_one);
+    copyImage(imageTwoX(x), imageY(y), m_two);
   }
+}
+
+void TileComposer::setAllAlpha()
+{
+  TilePainter painter(m_tileSize);
+
+  setAlpha(imageOneX(0), imageY(0), painter.getAlpha(painter.LU));
+  setAlpha(imageOneX(1), imageY(0), painter.getAlpha(painter.U));
+  setAlpha(imageOneX(2), imageY(0), painter.getAlpha(painter.RU));
+  setAlpha(imageOneX(0), imageY(1), painter.getAlpha(painter.L));
+//  setAlpha(imageOneX(1), imageY(1), painter.getAlpha(painter.LU));
+  setAlpha(imageOneX(2), imageY(1), painter.getAlpha(painter.R));
+  setAlpha(imageOneX(0), imageY(2), painter.getAlpha(painter.LD));
+  setAlpha(imageOneX(1), imageY(2), painter.getAlpha(painter.D));
+  setAlpha(imageOneX(2), imageY(2), painter.getAlpha(painter.RD));
+
+  setAlpha(imageTwoX(0), imageY(0), painter.getAlpha(painter.ILU));
+  setAlpha(imageTwoX(1), imageY(0), painter.getAlpha(painter.IU));
+  setAlpha(imageTwoX(2), imageY(0), painter.getAlpha(painter.IRU));
+  setAlpha(imageTwoX(0), imageY(1), painter.getAlpha(painter.IL));
+//  setAlpha(imageTwoX(1), imageY(1), painter.getAlpha(painter.LU));
+  setAlpha(imageTwoX(2), imageY(1), painter.getAlpha(painter.IR));
+  setAlpha(imageTwoX(0), imageY(2), painter.getAlpha(painter.ILD));
+  setAlpha(imageTwoX(1), imageY(2), painter.getAlpha(painter.ID));
+  setAlpha(imageTwoX(2), imageY(2), painter.getAlpha(painter.IRD));
 }
 
 long TileComposer::ixi(const int x, const int y) const
 {
   return (x + y * m_tileSize) * 4;
+}
+
+long TileComposer::imageOneX(const long &x) const
+{
+  return 1 + x + m_tileSize * x;
+}
+
+long TileComposer::imageTwoX(const long &x) const
+{
+  return 4 + x + m_tileSize * (x + 3);
+}
+
+long TileComposer::imageY(const long &y) const
+{
+  return 1 + y + m_tileSize * y;
 }
 
 long TileComposer::ixt(const int x, const int y) const
@@ -107,5 +147,6 @@ void TileComposer::build()
   }
   clear();
   copyAllImages();
+  setAllAlpha();
 }
 

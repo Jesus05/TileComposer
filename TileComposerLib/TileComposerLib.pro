@@ -4,7 +4,8 @@
 #
 #-------------------------------------------------
 
-QT       -= core gui
+CONFIG -= qt
+#QT       -= core gui
 
 TARGET = TileComposerLib
 TEMPLATE = lib
@@ -45,6 +46,8 @@ unix {
 INCLUDEPATH += ../../include
 
 LIBS += -L../../lib/
+
+DESTDIR = ../lib/
 
 win32 {
     CONFIG(release, debug|release):LIBS += -lnoise
