@@ -5,66 +5,76 @@
 double TilePainter::nx(const double &x, const TilePainter::EDirection &direction) const
 {
   double ret = (double)x / (double)m_tileSize;
-  switch (direction)
-  {
-    case U:
-    case D:
-    case IU:
-    case ID:
-      if (x < m_tileSize / 2.0) return ret;
-      else return 0.5 + (0.5 - ret);
-    case R:
-    case RU:
-    case RD:
-    case IR:
-    case IRU:
-    case IRD:
-      return ret;
-    case L:
-    case LU:
-    case LD:
-    case IL:
-    case ILU:
-    case ILD:
-      return ret - 1.0;
-    case INNER:
-      return 0;
-  }
 
-  return ret;
+  if (x < m_tileSize / 2.0) return ret;
+  else return 0.5 + (0.5 - ret);
+
+
+//  switch (direction)
+//  {
+//    case U:
+//    case D:
+//    case IU:
+//    case ID:
+//      if (x < m_tileSize / 2.0) return ret;
+//      else return 0.5 + (0.5 - ret);
+//    case R:
+//    case RU:
+//    case RD:
+//    case IR:
+//    case IRU:
+//    case IRD:
+//      return ret;
+//    case L:
+//    case LU:
+//    case LD:
+//    case IL:
+//    case ILU:
+//    case ILD:
+//      return ret - 1.0;
+//    case INNER:
+//      return 0;
+//  }
+
+//  return ret;
 }
 
 double TilePainter::ny(const double &y, const TilePainter::EDirection &direction) const
 {
   double ret = (double)y / (double)m_tileSize;
 
-  switch (direction)
-  {
-    case R:
-    case L:
-    case IR:
-    case IL:
-      if (y < m_tileSize / 2.0) return ret;
-      else return 0.5 + (0.5 - ret);
-    case U:
-    case RU:
-    case LU:
-    case IU:
-    case IRU:
-    case ILU:
-      return ret - 1.0;
-    case D:
-    case RD:
-    case LD:
-    case ID:
-    case IRD:
-    case ILD:
-      return ret;
-    case INNER:
-      return 0;
-  }
+  if (y < m_tileSize / 2.0) return ret;
+  else return 0.5 + (0.5 - ret);
 
-  return ret;
+//  double ret = (double)y / (double)m_tileSize;
+
+//  switch (direction)
+//  {
+//    case R:
+//    case L:
+//    case IR:
+//    case IL:
+//      if (y < m_tileSize / 2.0) return ret;
+//      else return 0.5 + (0.5 - ret);
+//    case U:
+//    case RU:
+//    case LU:
+//    case IU:
+//    case IRU:
+//    case ILU:
+//      return ret - 1.0;
+//    case D:
+//    case RD:
+//    case LD:
+//    case ID:
+//    case IRD:
+//    case ILD:
+//      return ret;
+//    case INNER:
+//      return 0;
+//  }
+
+//  return ret;
 }
 
 double TilePainter::nz(const double &/*x*/, const double &/*y*/, const TilePainter::EDirection &/*direction*/) const
@@ -80,8 +90,11 @@ double TilePainter::noise(const double &x, const double &y, const TilePainter::E
 
 int TilePainter::value(const int &x, const int &y, const TilePainter::EDirection &direction) const
 {
-  const int mx = (direction & R) ? x : (m_tileSize - x);
-  const int my = (direction & D) ? y : (m_tileSize - y);
+  int mx = (direction & R) ? x : (m_tileSize - x);
+  int my = (direction & D) ? y : (m_tileSize - y);
+
+  if (direction & INNER) mx = m_tileSize - mx;
+  if (direction & INNER) my = m_tileSize - my;
 
   switch (direction)
   {
@@ -114,10 +127,15 @@ double TilePainter::alpha(const double &x, const double &y, const TilePainter::E
 {
   const double val = value(x, y, direction);
   double alpha = m_gradient.get(val, noise(x, y, direction) * m_vgradient.rev(val)) * 255.0;
-//  if (direction & INNER) alpha = m_gradient.rev(val, -noise(x, y, direction) * m_vgradient.rev(val)) * 255.0;
-//  else alpha = m_gradient.get(val, noise(x, y, direction) * m_vgradient.rev(val)) * 255.0;
-  if (direction & INNER) alpha = 255.0 - alpha;
+  if (direction & INNER) alpha = m_gradient.get(m_tileSize - val, noise(x, y, direction) * m_vgradient.rev(val)) * 255.0;
   return alpha;
+
+//  const double val = value(x, y, direction);
+//  double alpha = m_gradient.get(val, noise(x, y, direction) * m_vgradient.rev(val)) * 255.0;
+////  if (direction & INNER) alpha = m_gradient.rev(val, -noise(x, y, direction) * m_vgradient.rev(val)) * 255.0;
+////  else alpha = m_gradient.get(val, noise(x, y, direction) * m_vgradient.rev(val)) * 255.0;
+//  if (direction & INNER) alpha = 255.0 - alpha;
+//  return alpha;
 }
 
 TilePainter::TilePainter(const int tileSize)
