@@ -45,37 +45,37 @@ void TileComposer::setAlpha(const int x, const int y, const std::vector<std::vec
 
 void TileComposer::copyAllImages()
 {
-  for (int x = 0; x < 3; x++)
+  for (int x = 0; x < 6; x++)
   for (int y = 0; y < 3; y++)
   {
-    copyImage(imageOneX(x), imageY(y), m_one);
-    copyImage(imageTwoX(x), imageY(y), m_two);
+    copyImage(imageOneX(x), imageOneY(y), m_one);
   }
 }
 
 void TileComposer::setAllAlpha()
 {
-  TilePainter painter(m_tileSize);
+  TilePainter painter(m_tileSize, m_module);
 
-  setAlpha(imageOneX(0), imageY(0), painter.getAlpha(painter.LU));
-  setAlpha(imageOneX(1), imageY(0), painter.getAlpha(painter.U));
-  setAlpha(imageOneX(2), imageY(0), painter.getAlpha(painter.RU));
-  setAlpha(imageOneX(0), imageY(1), painter.getAlpha(painter.L));
+  setAlpha(imageOneX(0), imageOneY(0), painter.getAlpha(painter.LU));
+  setAlpha(imageOneX(1), imageOneY(0), painter.getAlpha(painter.U));
+  setAlpha(imageOneX(2), imageOneY(0), painter.getAlpha(painter.RU));
+  setAlpha(imageOneX(0), imageOneY(1), painter.getAlpha(painter.L));
 //  setAlpha(imageOneX(1), imageY(1), painter.getAlpha(painter.LU));
-  setAlpha(imageOneX(2), imageY(1), painter.getAlpha(painter.R));
-  setAlpha(imageOneX(0), imageY(2), painter.getAlpha(painter.LD));
-  setAlpha(imageOneX(1), imageY(2), painter.getAlpha(painter.D));
-  setAlpha(imageOneX(2), imageY(2), painter.getAlpha(painter.RD));
+  setAlpha(imageOneX(2), imageOneY(1), painter.getAlpha(painter.R));
+  setAlpha(imageOneX(0), imageOneY(2), painter.getAlpha(painter.LD));
+  setAlpha(imageOneX(1), imageOneY(2), painter.getAlpha(painter.D));
+  setAlpha(imageOneX(2), imageOneY(2), painter.getAlpha(painter.RD));
 
-  setAlpha(imageTwoX(0), imageY(0), painter.getAlpha(painter.ILU));
-  setAlpha(imageTwoX(1), imageY(0), painter.getAlpha(painter.IU));
-  setAlpha(imageTwoX(2), imageY(0), painter.getAlpha(painter.IRU));
-  setAlpha(imageTwoX(0), imageY(1), painter.getAlpha(painter.IL));
+  setAlpha(imageTwoX(0), imageOneY(0), painter.getAlpha(painter.IRD));
+  setAlpha(imageTwoX(1), imageOneY(0), painter.getAlpha(painter.ID));
+  setAlpha(imageTwoX(2), imageOneY(0), painter.getAlpha(painter.ILD));
+  setAlpha(imageTwoX(0), imageOneY(1), painter.getAlpha(painter.IR));
 //  setAlpha(imageTwoX(1), imageY(1), painter.getAlpha(painter.LU));
-  setAlpha(imageTwoX(2), imageY(1), painter.getAlpha(painter.IR));
-  setAlpha(imageTwoX(0), imageY(2), painter.getAlpha(painter.ILD));
-  setAlpha(imageTwoX(1), imageY(2), painter.getAlpha(painter.ID));
-  setAlpha(imageTwoX(2), imageY(2), painter.getAlpha(painter.IRD));
+  setAlpha(imageTwoX(2), imageOneY(1), painter.getAlpha(painter.IL));
+  setAlpha(imageTwoX(0), imageOneY(2), painter.getAlpha(painter.IRU));
+  setAlpha(imageTwoX(1), imageOneY(2), painter.getAlpha(painter.IU));
+  setAlpha(imageTwoX(2), imageOneY(2), painter.getAlpha(painter.ILU));
+
 }
 
 long TileComposer::ixi(const int x, const int y) const
@@ -93,9 +93,14 @@ long TileComposer::imageTwoX(const long &x) const
   return 4 + x + m_tileSize * (x + 3);
 }
 
-long TileComposer::imageY(const long &y) const
+long TileComposer::imageOneY(const long &y) const
 {
   return 1 + y + m_tileSize * y;
+}
+
+long TileComposer::imageTwoY(const long &y) const
+{
+  return 1 + y + m_tileSize * (y + 3);
 }
 
 long TileComposer::ixt(const int x, const int y) const
@@ -103,19 +108,24 @@ long TileComposer::ixt(const int x, const int y) const
   return (x + y * m_tilesetWidth) * 4;
 }
 
-TileComposer::TileComposer(const long &tileSize, const void *one, const void *two)
+TileComposer::TileComposer(const long &tileSize, const void *one)
   : m_tileSize(tileSize),
     m_tilesetWidth(width()),
     m_tilesetSize(size(m_tileSize)),
     m_tileset(0),
     m_one(static_cast<const unsigned char*>(one)),
-    m_two(static_cast<const unsigned char*>(two))
+    m_module(std::nullptr_t())
 {
 }
 
 void TileComposer::setTilesetMemory(void *tileset)
 {
   m_tileset = static_cast<unsigned char*>(tileset);
+}
+
+void TileComposer::setNoise(const noise::module::Module *module)
+{
+  m_module = module;
 }
 
 void *TileComposer::tilesetMemory() const

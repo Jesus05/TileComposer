@@ -16,11 +16,12 @@ class TilePainter
                       IR = IRU | IRD, IL = ILU | ILD, ID = IRD | ILD, IU = IRU | ILU };
 
   private:
-    noise::module::Module *m_module;
+    const noise::module::Module *m_module;
     int m_tileSize;
     LinearGradient m_gradient;
     LinearVGradient m_vgradient;
     double m_nz;
+    bool m_noiseGenerated;
 
     double nx(const double &x, const EDirection &direction) const;
     double ny(const double &y, const EDirection &direction) const;
@@ -30,8 +31,8 @@ class TilePainter
     double alpha(const double &x, const double &y, const EDirection &direction) const;
 
   public:
-    TilePainter(const int tileSize = 128);
-
+    TilePainter(const int tileSize = 128, const noise::module::Module *m_module = std::nullptr_t());
+    ~TilePainter();
 //    QImage &setAlpha(const EDirection &direction, QImage &image) const;
 
     std::vector<std::vector<unsigned char>> getAlpha(const EDirection &direction) const;

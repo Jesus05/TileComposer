@@ -1,7 +1,7 @@
 #ifndef JSONLOADER_H
 #define JSONLOADER_H
 
-class NoisePack;
+struct NoisePack;
 
 NoisePack *loadModule(const char *filename);
 NoisePack *createModule(const char *json);

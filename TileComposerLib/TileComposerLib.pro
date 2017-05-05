@@ -29,14 +29,17 @@ SOURCES += tilecomposerlib.cpp \
     tilecomposer.cpp \
     tilepainter.cpp \
     lineargradient.cpp \
-    linearvgradient.cpp
+    linearvgradient.cpp \
+    jsonloader.cpp
 
 HEADERS += tilecomposerlib.h\
         tilecomposerlib_global.h \
     tilecomposer.h \
     tilepainter.h \
     lineargradient.h \
-    linearvgradient.h
+    linearvgradient.h \
+    jsonloader.h \
+    noisepack.h
 
 unix {
     target.path = /usr/lib

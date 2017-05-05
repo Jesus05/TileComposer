@@ -74,6 +74,7 @@ class JSonLoader
 
 NoisePack *loadModule(const char *filename)
 {
+  if (!filename) return std::nullptr_t();
   ifstream in(filename);
   string content((istreambuf_iterator<char>(in)), istreambuf_iterator<char>());
   if (content.empty())
@@ -89,6 +90,7 @@ NoisePack *loadModule(const char *filename)
 
 NoisePack *createModule(const char *json)
 {
+  if (!json) return std::nullptr_t();
   JSonLoader reader(json);
 
   return reader.get();
@@ -579,7 +581,10 @@ void releaseModule(NoisePack *module)
 {
   if (module)
   {
-    for (Module *mod : module->modules) delete mod;
+    for (size_t i = 0; i < module->modules.size(); i++)
+    {
+      delete module->modules[i];
+    }
     delete module;
   }
 }

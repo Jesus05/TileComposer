@@ -3,6 +3,12 @@
 
 #include <vector>
 
+namespace noise {
+namespace module {
+class Module;
+}
+}
+
 class TileComposer
 {
   private:
@@ -11,7 +17,7 @@ class TileComposer
     long m_tilesetSize;
     unsigned char* m_tileset;
     const unsigned char* m_one;
-    const unsigned char* m_two;
+    const noise::module::Module *m_module;
   public:
     static long width(const long &tileSize);
     static long height(const long &tileSize);
@@ -26,10 +32,12 @@ class TileComposer
     long ixi(const int x, const int y) const;
     long imageOneX(const long &x) const;
     long imageTwoX(const long &x) const;
-    long imageY(const long &y) const;
+    long imageOneY(const long &y) const;
+    long imageTwoY(const long &y) const;
   public:
-    TileComposer(const long &tileSize, const void* one, const void* two);
+    TileComposer(const long &tileSize, const void* one);
     void setTilesetMemory(void* tileset);
+    void setNoise(const noise::module::Module *module);
     void* tilesetMemory() const;
     long width() const;
     long height() const;

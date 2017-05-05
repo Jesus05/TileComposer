@@ -2,7 +2,7 @@
 
 #include "noise/module/perlin.h"
 
-double TilePainter::nx(const double &x, const TilePainter::EDirection &direction) const
+double TilePainter::nx(const double &x, const TilePainter::EDirection &/*direction*/) const
 {
   double ret = (double)x / (double)m_tileSize;
 
@@ -39,7 +39,7 @@ double TilePainter::nx(const double &x, const TilePainter::EDirection &direction
 //  return ret;
 }
 
-double TilePainter::ny(const double &y, const TilePainter::EDirection &direction) const
+double TilePainter::ny(const double &y, const TilePainter::EDirection &/*direction*/) const
 {
   double ret = (double)y / (double)m_tileSize;
 
@@ -138,18 +138,29 @@ double TilePainter::alpha(const double &x, const double &y, const TilePainter::E
 //  return alpha;
 }
 
-TilePainter::TilePainter(const int tileSize)
-  : m_tileSize(tileSize),
+TilePainter::TilePainter(const int tileSize, const noise::module::Module *module)
+  : m_module(module),
+    m_tileSize(tileSize),
     m_gradient(m_tileSize / 3.0, m_tileSize * 2.0 / 3.0),
-    m_vgradient(m_tileSize / 6.0, m_tileSize / 2.0, m_tileSize * 5.0 / 6.0)
+    m_vgradient(m_tileSize / 6.0, m_tileSize / 2.0, m_tileSize * 5.0 / 6.0),
+    m_noiseGenerated(false)
 {
-  noise::module::Perlin *perlin = new noise::module::Perlin();
-  perlin->SetOctaveCount(3);
-  perlin->SetFrequency(2);
-
+  if (m_module == std::nullptr_t())
+  {
+    noise::module::Perlin *perlin = new noise::module::Perlin();
+    perlin->SetOctaveCount(3);
+    perlin->SetFrequency(2);
+    m_module = perlin;
+  }
   m_nz = 0.0;
+}
 
-  m_module = perlin;
+TilePainter::~TilePainter()
+{
+  if (m_noiseGenerated && m_module != std::nullptr_t())
+  {
+    delete m_module;
+  }
 }
 
 int TilePainter::tileSize() const
